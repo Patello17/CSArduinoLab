@@ -5,12 +5,12 @@
 
 enum LED_STATE {OFF, ON, BLINKING};
 
-LED_STATE currentLEDState1;
-bool previousButton1;
-bool currentButton1;
-bool blinkState1;
-float blinkDelay1;
-float blinkTime1;
+LED_STATE currentLEDState1; // Current State of the LED
+bool previousButton1; // Whether the button was previously pressed
+bool currentButton1; // Whether the button is currently pressed
+bool blinkState1; // State of the Blinking LED (ON or OFF)
+float blinkDelay1; // Interval between blinks
+float blinkTime1; // Time to next blinkState relative to current time (currentTime + blinkDelay)
 
 LED_STATE currentLEDState2;
 bool previousButton2;
@@ -40,7 +40,7 @@ void setup() {
   blinkState2 = true;
   // set blink intervals
   blinkDelay1 = 500.0;
-  blinkDelay2 = 500.0;
+  blinkDelay2 = 250.0;
   // enable serial connection
   Serial.begin(9600);
 }
@@ -57,7 +57,7 @@ void checkState(int pin, bool* currentButton, bool* previousButton, LED_STATE* c
   *currentButton = isPressed(pin);
   // check if we transitioned from unpressed to pressed
   if (*currentButton == true && *previousButton == false) {
-    Serial.println("Button was just pressed");
+    // Serial.println("Button was just pressed");
     *previousButton = *currentButton;
     // change the state of the LED
     if (*currentLEDState == OFF) {
@@ -91,7 +91,7 @@ void updateLEDs() {
   else if (currentLEDState1 == OFF) { digitalWrite(LED_PIN1, OFF); }
 
   if (currentLEDState2 == ON) { digitalWrite(LED_PIN2, ON); }
-  else if (currentLEDState1 == BLINKING) { blink(LED_PIN2, &blinkState2, &blinkTime2, &blinkDelay2); }
+  else if (currentLEDState2 == BLINKING) { blink(LED_PIN2, &blinkState2, &blinkTime2, &blinkDelay2); }
   else if (currentLEDState2 == OFF) { digitalWrite(LED_PIN2, OFF); }
 }
 
@@ -107,14 +107,12 @@ bool blink(int pin, bool* blinkState, float* blinkTime, float* blinkDelay) {
     if (*blinkState == true) {
       digitalWrite(pin, OFF);
       *blinkState = false;
-      *blinkTime = currentTime + *blinkDelay;
     }
     // change from OFF to ON
     else if (*blinkState == false) {
       digitalWrite(pin, ON);
       *blinkState = true;
-      *blinkTime = currentTime + *blinkDelay;
     }
+    *blinkTime = currentTime + *blinkDelay;
   }
-  
 }
