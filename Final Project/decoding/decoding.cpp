@@ -175,16 +175,16 @@ void decodeMessage(String morseMessage) {
             spaceIndexList.add(i);
         }
     }
-    letterIndexList.add(morseMessage.length() - 1);
+    // letterIndexList.add(morseMessage.length() - 1);
     
     // parse through letter/word bounds
     for (int i = 0; i < letterIndexList.getSize() - 1; i++) {
         // define start bound
         if (letterIndexList[i] == 0) { letterStartIndex = 0; }
-        else letterStartIndex = letterIndexList.get(i) + 1;
+        else letterStartIndex = letterIndexList[i] + 1;
         //define end bound
-        if (letterIndexList[i] == letterIndexList.getSize() - 1) { letterEndIndex = letterIndexList.getSize() - 1; }
-        else letterEndIndex = letterIndexList.get(i + 1) - 1;
+        if (letterIndexList[i] == morseMessage.length() - 1) { letterEndIndex = morseMessage.length() - 1; }
+        else letterEndIndex = letterIndexList[i + 1] - 1;
 
         // find the letter in morse
         for (int j = letterStartIndex; j <= letterEndIndex; j++) {
