@@ -168,10 +168,10 @@ void blinkDash(int ledPin, int buzzerPin) {
 
 void pauseLetter(int ledPin, int buzzerPin) {
     blinkState = false;
-    blink(ledPin, buzzerPin, (LETTER_PAUSE - SIGNAL_PAUSE) / BEAT_MULTIPLIER);
+    blink(ledPin, buzzerPin, (LETTER_PAUSE - SIGNAL_PAUSE) / BEAT_MULTIPLIER); // duration of pause between letters
 }
 
 void pauseWord(int ledPin, int buzzerPin) {
     blinkState = false;
-            blink(ledPin, buzzerPin, (WORD_PAUSE - SIGNAL_PAUSE) / BEAT_MULTIPLIER);
+            blink(ledPin, buzzerPin, (WORD_PAUSE - SIGNAL_PAUSE) / BEAT_MULTIPLIER); // duration of pause between words
 }

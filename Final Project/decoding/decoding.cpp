@@ -1,4 +1,3 @@
-// #define PRESS_EXIT_DETECTION_TIME 2000 // how long to press to exit detection mode in milliseconds
 #define EXIT_DETECTION_TIME 5000 // how long to wait to exit detection mode in milliseconds
 #define DOT_DETECTION_TIME 500 // how long to press to register a dot in milliseconds
 #define DASH_DETECTION_TIME 1500 // how long to press to register a dash in milliseconds
@@ -80,8 +79,8 @@ void decode(int ledPin, int buzzerPin, int inputPin) {
     decodeMessage(detectMorse(ledPin, buzzerPin, inputPin));
     outputAlphabet();
 }
+
 String detectMorse(int ledPin, int buzzerPin, int inputPin) {
-    
     if (elapsedExitTime >= EXIT_DETECTION_TIME && allowReset) {
         // reset variables
         timeAtTrigger = 0.0;
@@ -153,15 +152,6 @@ String detectMorse(int ledPin, int buzzerPin, int inputPin) {
             allowWordSpace = false;
         }
     }
-    // Serial.print("Pressed: ");
-    // Serial.print(buttonPressDuration);
-    // Serial.print(" ||| Unpressed: ");
-    // Serial.print(buttonUnpressDuration);
-    // Serial.print(" ||| State: ");
-    // Serial.println(morseInputState);
-    // Serial.print(buttonPressDuration);
-    // Serial.print(" || ");
-    // Serial.println(morseMessage);
     return morseMessage;
 }
 
@@ -177,9 +167,9 @@ void decodeMessage(String morseMessage) {
     // identify bounds (the start, spaces between letters, and the end)
     letterIndexList.add(0);
     for (int i = 0; i < morseMessage.length(); i++) {
-        // if (i == 0)
-        // if (i == morseMessage.length() - 1) { letterEndIndex = morseMessage.length() - 1; }
+        // handle spaces between letters
         if ((String)morseMessage[i] == "|") {  letterIndexList.add(i);}
+        // handle spaces between words
         if ((String)morseMessage[i] == "/") {
             letterIndexList.add(i);
             spaceIndexList.add(i);
@@ -187,15 +177,19 @@ void decodeMessage(String morseMessage) {
     }
     letterIndexList.add(morseMessage.length() - 1);
     
+    // parse through letter/word bounds
     for (int i = 0; i < letterIndexList.getSize() - 1; i++) {
+        // define start bound
         if (letterIndexList[i] == 0) { letterStartIndex = 0; }
         else letterStartIndex = letterIndexList.get(i) + 1;
-        // letterStartIndex = letterIndexList.get(i);
+        //define end bound
         if (letterIndexList[i] == letterIndexList.getSize() - 1) { letterEndIndex = letterIndexList.getSize() - 1; }
         else letterEndIndex = letterIndexList.get(i + 1) - 1;
 
+        // find the letter in morse
         for (int j = letterStartIndex; j <= letterEndIndex; j++) {
             morseLetter += morseMessage[j];
+            // is there a space?
             for (int k = 0; k < spaceIndexList.getSize(); k++) {
                 if (j - 1 == spaceIndexList[k]) {
                 alphabetMessage += " ";
@@ -203,8 +197,7 @@ void decodeMessage(String morseMessage) {
             }
         }
 
-        
-
+        // check input and translate
         if (checkInput(morseLetter)) { alphabetMessage += decodingMap[(String)morseLetter]; }
         else if (morseLetter.length() > 1) { alphabetMessage += "#"; }
         morseLetter = "";
@@ -212,6 +205,7 @@ void decodeMessage(String morseMessage) {
 }
 
 void outputAlphabet() {
+    // display the morse and translated message
     if (morseMessage.length() > 0) {
         Serial.print("Morse: ");
         Serial.print(morseMessage);
@@ -222,28 +216,9 @@ void outputAlphabet() {
 }
 
 bool checkInput(String input) {
+    // check if the input is a valid morse code sequence
     for (const auto& key : decodingMap) {
         if (input == key.first) { return true; }
     }
     return false;
 }
-
-// void changeButtonState(int pin) {
-//     // check for button press
-//     if (digitalRead(pin) == LOW) { 
-//         currentButtonState = true; 
-//     } else {    
-//         currentButtonState = false;
-//     }
-//     // check if we transitioned from unpressed to pressed
-//     if (currentButtonState && !previousButtonState) {
-//         previousButtonState = currentButtonState;
-//         if (morseInputState == false) { morseInputState = true; }
-//         else if (morseInputState == true) { morseInputState = false; }
-//     }
-//     // check if we transitioned from pressed to unpressed
-//     else if (!currentButtonState && previousButtonState) {
-//         previousButtonState = currentButtonState;
-//     }
-    
-// }
