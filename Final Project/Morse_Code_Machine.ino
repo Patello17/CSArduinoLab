@@ -50,12 +50,13 @@ void updateMode() {
   // update mode based on the current state
   if (codingMode == ENCODING) {
     // run encoding logic
-    // Serial.println("Encoding");
+    Serial.print("Encoding - ");
     encode(LED_PIN, BUZZER_PIN);
+    Serial.println("");
   }
   else if (codingMode == DECODING) {
     // run decoding logic
-    // Serial.println("Decoding");
+    Serial.print("Decoding - ");
     decode(LED_PIN, BUZZER_PIN, MORSE_INPUT_PIN);
   }
 }
